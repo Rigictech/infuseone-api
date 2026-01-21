@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Traits;
+namespace App\Traits\Response;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 trait CommonTrait
 {
@@ -16,7 +18,7 @@ trait CommonTrait
         }
         $filename = uniqid() . '.' . $type;
         $filePath = 'profile/' . $filename;
-        Storage::disk('public_uploads')->put($filePath, $imageData);
+        Storage::disk('public')->put($filePath, $imageData);
         return $filePath;
       }else {
         return false;

@@ -93,7 +93,7 @@ class UserController extends Controller
         $data = $request->validated();
     
         $user = User::find($id);
-       $data['role']='User';
+        $data['role']='User';
         if(!empty($user)){
             $user->update($data);
             if(!empty($user->roles)){

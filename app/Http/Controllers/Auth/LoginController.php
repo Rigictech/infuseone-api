@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Response\ResponseTrait;
+use App\Traits\Response\CommonTrait;
 use App\Http\Requests\Auth\LoginRequest;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\ChangePasswordRequest;
 
+
 class LoginController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait,CommonTrait;
     public function login(LoginRequest $request){
         $userLogin = false;    
         $user = User::where('email',$request['email'])->first();
@@ -73,5 +75,54 @@ class LoginController extends Controller
         return $this->jsonResponseSuccess(
             trans('session.logout_failed')
         );
+    }
+
+
+    public function updateProfile(Request $request)
+    { 
+        $user = $request->user(); 
+       
+        if($user){
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+            ];
+           
+            $user->update($data);
+        
+            if ($user) {
+                return $this->jsonResponseSuccess(['message' => trans('common.updated')]);
+            }else{
+                return $this->jsonResponseFail(['message' => trans('common.failed')]);
+            }
+        }else{
+            return $this->jsonResponseFail(['message' => trans('common.failed')]);
+        } 
+    }
+
+    public function updateProfileImage(Request $request)
+    { 
+       $user = $request->user(); 
+       
+        if($user){
+            $data = [
+                'profile_image' => $request->profile_image
+            ];
+          
+            if(!empty($data['profile_image'])){
+             $data['profile_image'] =  $this->saveProfileImage($data['profile_image']);
+            }else{
+                $data['profile_image'] =  $user->profile_image;
+            }
+            $user->update($data);
+        
+            if ($user) {
+                return $this->jsonResponseSuccess(['message' => trans('common.updated')]);
+            }else{
+                return $this->jsonResponseFail(['message' => trans('common.failed')]);
+            }
+        }else{
+            return $this->jsonResponseFail(['message' => config('common.failed')]);
+        } 
     }
 }

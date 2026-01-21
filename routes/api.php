@@ -16,6 +16,8 @@ Route::name('session.')
     ->group(function(){
         Route::post('login', [LoginController::class, 'login'])->name('login');
         Route::middleware('auth:sanctum')->post('change-password',[LoginController::class, 'changePassword']);
+        Route::middleware('auth:sanctum')->post('update-profile',[LoginController::class, 'updateProfile']);
+        Route::middleware('auth:sanctum')->post('update-profile-image',[LoginController::class, 'updateProfileImage']);
         Route::middleware('auth:sanctum')->post('logout',[LoginController::class, 'logout']);
     }
 );

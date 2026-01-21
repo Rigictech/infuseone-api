@@ -8,6 +8,7 @@ return [
     'deleted'         => 'Record Deleted Successfully',
     'bulk_deleted'    => 'Records Deleted Successfully',
     'status_updated'  => 'Status Updated Successfully',
+    'failed'          =>'Something Went Wrong'
 ]
 
 ?>
