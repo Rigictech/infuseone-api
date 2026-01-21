@@ -10,6 +10,8 @@ use App\Http\Resources\Admin\User\UserResource;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendInviteToUserMail;
 
 
 class UserController extends Controller
@@ -34,9 +36,9 @@ class UserController extends Controller
             });
         }
         //Exclue user with "Super Admin" role from users table
-        // $data = $data->whereHas('roles',function($q) {
-        //             return $q->whereNot('name','Super Admin');
-        //         });
+        $data = $data->whereHas('roles',function($q) {
+                    return $q->whereNot('name','Admin');
+                });
         
         if(isset($request->per_page)){
             $per_page = $request->per_page; 
@@ -53,7 +55,7 @@ class UserController extends Controller
     {
       
         $user = User::find($id);
-        $roles = Role::WhereNot('name','Super Admin')->pluck('name');
+        $roles = Role::WhereNot('name','Admin')->pluck('name');
         if(!$user){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
@@ -61,14 +63,18 @@ class UserController extends Controller
         return $this->jsonResponseSuccess(['user'=>new  UserResource($user),'roles'=>$roles]);
     }
 
-    public function store(UserRequest $request) : \Illuminate\Http\JsonResponse{
+    public function store(UserRequest $request)  //: \Illuminate\Http\JsonResponse
+    {
      
         $data = $request->validated();
       
         $user = User::create($data);
+        $data['role']='User';
 
-        //$user->assignRole($data['role']);
+        $user->assignRole($data['role']);
         if(!empty($user)){
+           
+            Mail::to($user->email)->send(new SendInviteToUserMail($user));  
             return $this->jsonResponseSuccess(
                 $user
             );
@@ -87,15 +93,15 @@ class UserController extends Controller
         $data = $request->validated();
     
         $user = User::find($id);
-       
+       $data['role']='User';
         if(!empty($user)){
             $user->update($data);
-            // if(!empty($user->roles)){
-            //     foreach($user->roles as $role){
-            //         $user->removeRole($role);
-            //     }
-            //  }
-            // $user->assignRole($data['role']);
+            if(!empty($user->roles)){
+                foreach($user->roles as $role){
+                    $user->removeRole($role);
+                }
+             }
+            $user->assignRole($data['role']);
             return $this->jsonResponseSuccess(
               ['user'=> new UserResource($user)]
             );

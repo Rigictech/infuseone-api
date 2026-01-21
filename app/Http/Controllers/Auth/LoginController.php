@@ -9,11 +9,12 @@ use App\Http\Requests\Auth\LoginRequest;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 
 class LoginController extends Controller
 {
     use ResponseTrait;
-    public function login(Request $request){
+    public function login(LoginRequest $request){
         $userLogin = false;    
         $user = User::where('email',$request['email'])->first();
  
@@ -24,8 +25,7 @@ class LoginController extends Controller
         if(!$user->status){
             return $this->jsonResponseFail(trans('auth.account_inactive'),401);
         }
-        $userRole = '';
-        //= $user->getRoleNames();
+        $userRole = $user->getRoleNames();
         if(empty($userRole[0])){
             $userLogin = [
                 'user'=>$user,
@@ -45,6 +45,21 @@ class LoginController extends Controller
         return $this->jsonResponseSuccess($userLogin);
     }
 
+    public function changePassword(ChangePasswordRequest $request)
+    {  
+      
+        $user = $request->user(); 
+        if (!Hash::check($request->current_password, $user->password)) {
+            return $this->jsonResponseFail(['message' => trans('common.password_incorrect')]);
+        }
+ 
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+       
+        return $this->jsonResponseSuccess(['message' => trans('common.password_updated')]);
+    }
+
     public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
         if(
@@ -56,7 +71,7 @@ class LoginController extends Controller
         }
 
         return $this->jsonResponseSuccess(
-            trans('session.logout_fail')
+            trans('session.logout_failed')
         );
     }
 }

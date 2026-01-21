@@ -16,5 +16,6 @@ return [
     'failed' => 'These credentials do not match.',
     'logout_failed' => 'Something went wrong in logout',
     'login_success' => 'Logged in successfully',
+    'logout_success' => 'Logged out successfully',
   
 ];

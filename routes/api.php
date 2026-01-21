@@ -15,9 +15,11 @@ Route::name('session.')
     ->prefix('session')
     ->group(function(){
         Route::post('login', [LoginController::class, 'login'])->name('login');
-        Route::middleware('auth:sanctum')->post('logout',[SessionController::class, 'logout']);
+        Route::middleware('auth:sanctum')->post('change-password',[LoginController::class, 'changePassword']);
+        Route::middleware('auth:sanctum')->post('logout',[LoginController::class, 'logout']);
     }
 );
+
 
 Route::name('admin.')
     ->middleware(['auth:sanctum'])

@@ -3,6 +3,10 @@
 namespace App\Http\Requests\Admin\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+
 
 class UserRequest extends FormRequest
 {
@@ -21,9 +25,11 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+      $userId = $this->route('id');
         return [
             'name'=>'required',
-            'email'=>'required|email|unique:users,email',
+            'email'=>['required','email',Rule::unique('users')->ignore($userId)],
+            'profile_image'=>'nullable',
             'password'=>'required'
         ];
     }
