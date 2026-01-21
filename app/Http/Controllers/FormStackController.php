@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Response\ResponseTrait;
-use App\Http\Requests\Admin\User\UserRequest;
-use App\Http\Resources\Admin\User\UserResource;
-use App\Models\User;
+use App\Http\Requests\Admin\FormStackUrl\FormStackRequest;
+use App\Http\Resources\Admin\FormStackUrl\FormStackResource;
+use App\Models\FormStackUrl;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
-
-class UserController extends Controller
+class FormStackController extends Controller
 {
     use ResponseTrait;
     public function showall(Request $request): \Illuminate\Http\JsonResponse
     {
       
-        $data = User::orderByDESC('id');
+        $data = FormStackUrl::orderByDESC('id');
         if(isset($request->search)){
             $data = $data->where('name','like',$request->search.'%')
                          ->Orwhere('email','like',$request->search.'%');
@@ -33,11 +31,7 @@ class UserController extends Controller
                 return $q->where('name','like','%'.$userRole.'%');
             });
         }
-        //Exclue user with "Super Admin" role from users table
-        // $data = $data->whereHas('roles',function($q) {
-        //             return $q->whereNot('name','Super Admin');
-        //         });
-        
+      
         if(isset($request->per_page)){
             $per_page = $request->per_page; 
         }else {
@@ -47,25 +41,25 @@ class UserController extends Controller
         if(empty($data)){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);  
         }
-        return $this->jsonResponseSuccess(['user'=> UserResource::collection($data)->response()->getData(true)]);
+        return $this->jsonResponseSuccess(['user'=> FormStackUrlResource::collection($data)->response()->getData(true)]);
     }
     public function show(Request $request,$id): \Illuminate\Http\JsonResponse
     {
       
-        $user = User::find($id);
+        $user = FormStackUrl::find($id);
         $roles = Role::WhereNot('name','Super Admin')->pluck('name');
         if(!$user){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
     
-        return $this->jsonResponseSuccess(['user'=>new  UserResource($user),'roles'=>$roles]);
+        return $this->jsonResponseSuccess(['user'=>new  FormStackUrlResource($user),'roles'=>$roles]);
     }
 
-    public function store(UserRequest $request) : \Illuminate\Http\JsonResponse{
+    public function store(FormStackUrlRequest $request) : \Illuminate\Http\JsonResponse{
      
         $data = $request->validated();
       
-        $user = User::create($data);
+        $user = FormStackUrl::create($data);
 
         //$user->assignRole($data['role']);
         if(!empty($user)){
@@ -81,23 +75,17 @@ class UserController extends Controller
             );
         }
     }
-    public function update(UserRequest $request,$id) : \Illuminate\Http\JsonResponse
+    public function update(FormStackUrlRequest $request,$id) : \Illuminate\Http\JsonResponse
     {
      
         $data = $request->validated();
     
-        $user = User::find($id);
+        $user = FormStackUrl::find($id);
        
         if(!empty($user)){
             $user->update($data);
-            // if(!empty($user->roles)){
-            //     foreach($user->roles as $role){
-            //         $user->removeRole($role);
-            //     }
-            //  }
-            // $user->assignRole($data['role']);
             return $this->jsonResponseSuccess(
-              ['user'=> new UserResource($user)]
+              ['user'=> new FormStackUrlResource($user)]
             );
         }
         else
@@ -111,7 +99,7 @@ class UserController extends Controller
 
     public function destroy($id){
       
-        $user = User::find($id);
+        $user = FormStackUrl::find($id);
         if($user){
            
             $user->delete();
@@ -130,7 +118,7 @@ class UserController extends Controller
 
     public function updateStatus(Request $request,$id){
         $data = $request->all();
-        $user = User::find($id);
+        $user = FormStackUrl::find($id);
         if(!$user)
         {
             return $this->jsonResponseFail(trans('common.no_record_found'),401);

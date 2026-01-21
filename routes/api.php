@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\FormStackUrlController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -32,6 +33,18 @@ Route::name('admin.')
             Route::post('update/{id}', [UserController::class, 'update']);
             Route::post('destroy/{id}', [UserController::class, 'destroy']);
             Route::post('update-status/{id}', [UserController::class, 'updateStatus']);
+            
+        });
+
+        Route::name('form-stack-url')
+        ->prefix('form-stack-url')
+        ->group(function (){
+            Route::post('showall', [FormStackUrlController::class, 'showall']);
+            Route::get('show/{id}', [FormStackUrlController::class, 'show']);
+            Route::post('create', [FormStackUrlController::class, 'store']);
+            Route::post('update/{id}', [FormStackUrlController::class, 'update']);
+            Route::post('destroy/{id}', [FormStackUrlController::class, 'destroy']);
+            Route::post('update-status/{id}', [FormStackUrlController::class, 'updateStatus']);
             
         });
     

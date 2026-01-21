@@ -22,7 +22,19 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'=>'required',
+            'email'=>'required|email|unique:users,email',
+            'password'=>'required'
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+         $errors = $validator->errors();
+        $response = response()->json([
+        'message' =>  $errors->first(),
+        ], 422);
+
+      throw new HttpResponseException($response);
     }
 }
