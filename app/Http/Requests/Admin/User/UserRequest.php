@@ -30,7 +30,7 @@ class UserRequest extends FormRequest
             'name'=>'required',
             'email'=>['required','email',Rule::unique('users')->ignore($userId)],
             'profile_image'=>'nullable',
-            'password'=>'required'
+            'password'=>'nullable'
         ];
     }
 

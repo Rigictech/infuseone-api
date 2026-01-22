@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\FormStackUrlController;
 use App\Http\Controllers\Admin\WebsiteUrlController;
 use App\Http\Controllers\Admin\ImportantInfoController;
+use App\Http\Controllers\Admin\UploadPDFController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -78,6 +79,18 @@ Route::name('admin.')
             Route::post('update/{id}', [ImportantInfoController::class, 'update']);
             Route::post('destroy/{id}', [ImportantInfoController::class, 'destroy']);
             Route::post('update-status/{id}', [ImportantInfoController::class, 'updateStatus']);
+            
+        });
+
+        Route::name('upload-pdf')
+        ->prefix('upload-pdf')
+        ->group(function (){
+            Route::post('showall', [UploadPDFController::class, 'showall']);
+            Route::get('show/{id}', [UploadPDFController::class, 'show']);
+            Route::post('create', [UploadPDFController::class, 'store']);
+            Route::post('update/{id}', [UploadPDFController::class, 'update']);
+            Route::post('destroy/{id}', [UploadPDFController::class, 'destroy']);
+            Route::post('update-status/{id}', [UploadPDFController::class, 'updateStatus']);
             
         });
     

@@ -71,6 +71,7 @@ class LoginController extends Controller
      public function profile(Request $request)
     {
         $user = $request->user();  
+        $user->role = $user->getRoleNames()[0];
         return $this->jsonResponseSuccess(['data'=>$user]);
     }
 

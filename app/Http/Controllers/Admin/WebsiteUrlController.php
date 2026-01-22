@@ -42,12 +42,12 @@ class WebsiteUrlController extends Controller
     {
       
         $website_url = WebsiteUrl::find($id);
-        $roles = Role::WhereNot('name','Super Admin')->pluck('name');
+      
         if(!$website_url){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
     
-        return $this->jsonResponseSuccess(['website_url'=>new  WebsiteUrlResource($website_url),'roles'=>$roles]);
+        return $this->jsonResponseSuccess(['website_url'=>new  WebsiteUrlResource($website_url)]);
     }
 
     public function store(WebsiteUrlRequest $request) : \Illuminate\Http\JsonResponse{
@@ -56,7 +56,7 @@ class WebsiteUrlController extends Controller
       
         $website_url = WebsiteUrl::create($data);
 
-        //$website_url->assignRole($data['role']);
+      
         if(!empty($website_url)){
             return $this->jsonResponseSuccess(
                 $website_url

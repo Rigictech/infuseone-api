@@ -41,12 +41,12 @@ class FormStackUrlController extends Controller
     {
       
         $form_stack_url = FormStackUrl::find($id);
-        $roles = Role::WhereNot('name','Super Admin')->pluck('name');
+       
         if(!$form_stack_url){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
     
-        return $this->jsonResponseSuccess(['form_stack_url'=>new  FormStackUrlResource($form_stack_url),'roles'=>$roles]);
+        return $this->jsonResponseSuccess(['form_stack_url'=>new  FormStackUrlResource($form_stack_url)]);
     }
 
     public function store(FormStackUrlRequest $request) : \Illuminate\Http\JsonResponse{

@@ -24,4 +24,19 @@ trait CommonTrait
         return false;
       }
     }
+
+    public static function uploadPdf(Request $request)
+    {
+        $request->validate([
+            $inputName => 'required|file|mimes:pdf|max:2048', // max 2MB
+        ]);
+
+        $file = $request->file($inputName);
+
+        $fileName = Str::random(40) . '.' . $file->getClientOriginalExtension();
+
+        $path = $file->storeAs('public/' . $storagePath, $fileName);
+        
+        return $path;
+    }
 }

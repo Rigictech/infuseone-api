@@ -5,47 +5,60 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Response\ResponseTrait;
-use App\Http\Requests\Admin\ImportantInfo\ImportantInfoRequest;
-use App\Http\Resources\Admin\ImportantInfo\ImportantInfoResource;
-use App\Models\ImportantInfo;
+use App\Http\Requests\Admin\UploadPDF\UploadPDFRequest;
+use App\Http\Resources\Admin\UploadPDF\UploadPDFResource;
+use App\Models\UploadPDF;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
-class ImportantInfoController extends Controller
+class UploadPDFController extends Controller
 {
-     use ResponseTrait;
+    use ResponseTrait;
     public function showall(Request $request): \Illuminate\Http\JsonResponse
     {
       
-        $data = ImportantInfo::orderByDESC('id');
-       
-        $data = $data->get();
+        $data = UploadPDF::orderByDESC('id');
+        if(isset($request->search)){
+            $data = $data->where('title','like',$request->search.'%')
+                         ->Orwhere('pdf','like',$request->search.'%');
+                      
+        }
+        if(isset($request->status)){
+            $data = $data->where('status',$request->status);
+        }
+      
+      
+        if(isset($request->per_page)){
+            $per_page = $request->per_page; 
+        }else {
+            $per_page = '10';
+        }
+        $data = $data->paginate($per_page);
         if(empty($data)){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);  
         }
-        return $this->jsonResponseSuccess(['important_info'=> ImportantInfoResource::collection($data)->response()->getData(true)]);
+        return $this->jsonResponseSuccess(['upload_pdf'=> UploadPDFResource::collection($data)->response()->getData(true)]);
     }
     public function show(Request $request,$id): \Illuminate\Http\JsonResponse
     {
       
-        $important_info = ImportantInfo::find($id);
-        if(!$important_info){
+        $upload_pdf = UploadPDF::find($id);
+        if(!$upload_pdf){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
     
-        return $this->jsonResponseSuccess(['important_info'=>new  ImportantInfoResource($important_info)]);
+        return $this->jsonResponseSuccess(['upload_pdf'=>new  UploadPDFResource($upload_pdf),'roles'=>$roles]);
     }
 
-    public function store(ImportantInfoRequest $request) : \Illuminate\Http\JsonResponse{
+    public function store(UploadPDFRequest $request) : \Illuminate\Http\JsonResponse{
      
         $data = $request->validated();
       
-        $important_info = ImportantInfo::create($data);
+        $upload_pdf = UploadPDF::create($data);
 
-        
-        if(!empty($important_info)){
+        if(!empty($upload_pdf)){
             return $this->jsonResponseSuccess(
-                $important_info
+                $upload_pdf
             );
         }
         else
@@ -56,17 +69,17 @@ class ImportantInfoController extends Controller
             );
         }
     }
-    public function update(ImportantInfoRequest $request,$id) : \Illuminate\Http\JsonResponse
+    public function update(UploadPDFRequest $request,$id) : \Illuminate\Http\JsonResponse
     {
      
         $data = $request->validated();
     
-        $important_info = ImportantInfo::find($id);
+        $upload_pdf = UploadPDF::find($id);
        
-        if(!empty($important_info)){
-            $important_info->update($data);
+        if(!empty($upload_pdf)){
+            $upload_pdf->update($data);
             return $this->jsonResponseSuccess(
-              ['important_info'=> new ImportantInfoResource($important_info)]
+              ['upload_pdf'=> new UploadPDFResource($upload_pdf)]
             );
         }
         else
@@ -80,10 +93,10 @@ class ImportantInfoController extends Controller
 
     public function destroy($id){
       
-        $important_info = ImportantInfo::find($id);
-        if($important_info){
+        $upload_pdf = UploadPDF::find($id);
+        if($upload_pdf){
            
-            $important_info->delete();
+            $upload_pdf->delete();
             return $this->jsonResponseSuccess(
                 trans('common.deleted')
             );
@@ -99,13 +112,13 @@ class ImportantInfoController extends Controller
 
     public function updateStatus(Request $request,$id){
         $data = $request->all();
-        $important_info = ImportantInfo::find($id);
-        if(!$important_info)
+        $upload_pdf = UploadPDF::find($id);
+        if(!$upload_pdf)
         {
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
-        $important_info->status = $data['status'];
-        $important_info->save();
+        $upload_pdf->status = $data['status'];
+        $upload_pdf->save();
      
         return $this->jsonResponseSuccess(trans('common.status_updated'));
     }
