@@ -22,8 +22,8 @@ class UploadPDFRequest extends FormRequest
     public function rules(): array
     { 
         return [
-            'title'=>'required',
-            'pdf'=>'required',
+            'title' => 'required|string|max:255',
+            'pdf'   => 'nullable|mimes:pdf|max:10240', // 10MB
         ];
     }
 }

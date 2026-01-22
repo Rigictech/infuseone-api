@@ -50,46 +50,65 @@ class UploadPDFController extends Controller
         return $this->jsonResponseSuccess(['upload_pdf'=>new  UploadPDFResource($upload_pdf),'roles'=>$roles]);
     }
 
-    public function store(UploadPDFRequest $request) : \Illuminate\Http\JsonResponse{
-     
+    public function store(UploadPDFRequest $request): \Illuminate\Http\JsonResponse
+    {
         $data = $request->validated();
-      
+
+        // Handle PDF upload
+        if ($request->hasFile('pdf')) {
+            $file = $request->file('pdf');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('pdfs', $fileName, 'public');
+            $data['pdf'] = $path;
+        }
+
         $upload_pdf = UploadPDF::create($data);
 
-        if(!empty($upload_pdf)){
+        if ($upload_pdf) {
             return $this->jsonResponseSuccess(
-                $upload_pdf
+                ['upload_pdf' => new UploadPDFResource($upload_pdf)]
             );
         }
-        else
-        {
-            return $this->jsonResponseFail(
-                trans('common.something_went_wrong'),
-                401
-            );
-        }
+
+        return $this->jsonResponseFail(
+            trans('common.something_went_wrong'),
+            401
+        );
     }
-    public function update(UploadPDFRequest $request,$id) : \Illuminate\Http\JsonResponse
+
+   public function update(UploadPDFRequest $request, $id): \Illuminate\Http\JsonResponse
     {
-     
         $data = $request->validated();
-    
         $upload_pdf = UploadPDF::find($id);
-       
-        if(!empty($upload_pdf)){
-            $upload_pdf->update($data);
-            return $this->jsonResponseSuccess(
-              ['upload_pdf'=> new UploadPDFResource($upload_pdf)]
-            );
-        }
-        else
-        {
+
+        if (!$upload_pdf) {
             return $this->jsonResponseFail(
                 trans('common.no_record_found'),
                 401
             );
         }
+
+        // Handle PDF upload
+        if ($request->hasFile('pdf')) {
+
+            // Delete old PDF
+            if ($upload_pdf->pdf && \Storage::disk('public')->exists($upload_pdf->pdf)) {
+                \Storage::disk('public')->delete($upload_pdf->pdf);
+            }
+
+            $file = $request->file('pdf');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('pdfs', $fileName, 'public');
+            $data['pdf'] = $path;
+        }
+
+        $upload_pdf->update($data);
+
+        return $this->jsonResponseSuccess(
+            ['upload_pdf' => new UploadPDFResource($upload_pdf)]
+        );
     }
+
 
     public function destroy($id){
       
