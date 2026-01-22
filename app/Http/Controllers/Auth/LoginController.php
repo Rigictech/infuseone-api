@@ -135,7 +135,7 @@ class LoginController extends Controller
                 return $this->jsonResponseFail(['message' => trans('common.failed')]);
             }
         }else{
-            return $this->jsonResponseFail(['message' => config('common.failed')]);
+            return $this->jsonResponseFail(['message' => trans('common.failed')]);
         } 
     }
 

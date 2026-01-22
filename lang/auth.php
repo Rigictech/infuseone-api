@@ -4,12 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Session Messages
+    | Authentication Messages
     |--------------------------------------------------------------------------
     */
 
-    'failed'         => 'Invalid email or password.',
-    'logout_success' => 'Logged out successfully.',
-    'logout_failed'  => 'Logout failed. Please try again.',
+    'account_inactive' => 'Your account is inactive. Please contact administrator.',
 
 ];

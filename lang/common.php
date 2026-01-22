@@ -1,14 +1,29 @@
-<?php 
+<?php
 
 return [
-    'no_record_found' => 'No Record Found',
-    'something_went_wrong'=> 'Something Went Wrong',
-    'added'           => 'Record Added Successfully',
-    'updated'         => 'Record Updated Successfully',
-    'deleted'         => 'Record Deleted Successfully',
-    'bulk_deleted'    => 'Records Deleted Successfully',
-    'status_updated'  => 'Status Updated Successfully',
-    'failed'          =>'Something Went Wrong'
-]
 
-?>
+    /*
+    |--------------------------------------------------------------------------
+    | Common Messages
+    |--------------------------------------------------------------------------
+    */
+
+    'no_record_found'        => 'No record found.',
+    'something_went_wrong'   => 'Something went wrong. Please try again.',
+    'deleted'                => 'Record deleted successfully.',
+    'status_updated'         => 'Status updated successfully.',
+
+    'updated'                => 'Updated successfully.',
+    'failed'                 => 'Operation failed.',
+
+    'password_incorrect'     => 'Current password is incorrect.',
+    'password_updated'       => 'Password updated successfully.',
+
+    'MAIL_SEND_SUCCESS'      => 'Password reset email sent successfully.',
+    'USER_NOT_FAILED'        => 'User not found.',
+    'INVALID_TOKEN'          => 'Invalid reset token.',
+    'TOKEN_EXPIRED'          => 'Reset token has expired.',
+    'PASSWORD_RESET_SUCCESS' => 'Password reset successfully.',
+    'EMAIL_FAILED'           => 'Email not found.',
+
+];
