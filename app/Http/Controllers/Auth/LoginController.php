@@ -62,6 +62,12 @@ class LoginController extends Controller
         return $this->jsonResponseSuccess(['message' => trans('common.password_updated')]);
     }
 
+     public function profile(Request $request)
+    {
+        $user = $request->user();  
+        return $this->jsonResponseSuccess(['data'=>$user]);
+    }
+
     public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
         if(
@@ -124,5 +130,42 @@ class LoginController extends Controller
         }else{
             return $this->jsonResponseFail(['message' => config('common.failed')]);
         } 
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+        $token = \Str::random(60);
+        if ($user) { 
+
+            Mail::to($user->email)->send(new ResetPasswordMail($token));
+            return $this->jsonResponseSuccess(['message' => trans('common.MAIL_SEND_SUCCESS')]);
+        }
+        return $this->jsonResponseFail(['message' => trans('common.USER_NOT_FAILED')]);
+    
+    
+    }
+   
+    public function resetPassword(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|confirmed|min:8',
+        ],[
+            'password.min' => 'The password must be at least 8 characters long.',
+            'email.exists' => 'We could not find an account with that email address.',
+        ]); 
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            $user->update([
+                'password' => Hash::make($request->password),
+                ]);             
+               
+            return redirect()->back()->with('status', trans('common.PASSWORD_RESET_SUCCESS'));
+        }
+        return redirect()->back()->withErrors(['email' => trans('common.EMAIL_FAILED')]);
     }
 }
