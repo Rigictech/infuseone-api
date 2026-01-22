@@ -4,19 +4,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Response\ResponseTrait;
-use App\Http\Requests\Admin\FormStackUrl\FormStackUrlRequest;
-use App\Http\Resources\Admin\FormStackUrl\FormStackUrlResource;
-use App\Models\FormStackUrl;
+use App\Http\Requests\Admin\WebsiteUrl\WebsiteUrlRequest;
+use App\Http\Resources\Admin\WebsiteUrl\WebsiteUrlResource;
+use App\Models\WebsiteUrl;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
-class FormStackUrlController extends Controller
+class WebsiteUrlController extends Controller
 {
     use ResponseTrait;
     public function showall(Request $request): \Illuminate\Http\JsonResponse
     {
       
-        $data = FormStackUrl::orderByDESC('id');
+        $data = WebsiteUrl::orderByDESC('id');
         if(isset($request->search)){
             $data = $data->where('title','like',$request->search.'%')
                          ->Orwhere('url','like',$request->search.'%');
@@ -25,7 +25,8 @@ class FormStackUrlController extends Controller
         if(isset($request->status)){
             $data = $data->where('status',$request->status);
         }
-       
+      
+      
         if(isset($request->per_page)){
             $per_page = $request->per_page; 
         }else {
@@ -35,29 +36,30 @@ class FormStackUrlController extends Controller
         if(empty($data)){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);  
         }
-        return $this->jsonResponseSuccess(['form_stack_url'=> FormStackUrlResource::collection($data)->response()->getData(true)]);
+        return $this->jsonResponseSuccess(['website_url'=> WebsiteUrlResource::collection($data)->response()->getData(true)]);
     }
     public function show(Request $request,$id): \Illuminate\Http\JsonResponse
     {
       
-        $form_stack_url = FormStackUrl::find($id);
+        $website_url = WebsiteUrl::find($id);
         $roles = Role::WhereNot('name','Super Admin')->pluck('name');
-        if(!$form_stack_url){
+        if(!$website_url){
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
     
-        return $this->jsonResponseSuccess(['form_stack_url'=>new  FormStackUrlResource($form_stack_url),'roles'=>$roles]);
+        return $this->jsonResponseSuccess(['website_url'=>new  WebsiteUrlResource($website_url),'roles'=>$roles]);
     }
 
-    public function store(FormStackUrlRequest $request) : \Illuminate\Http\JsonResponse{
+    public function store(WebsiteUrlRequest $request) : \Illuminate\Http\JsonResponse{
      
         $data = $request->validated();
       
-        $form_stack_url = FormStackUrl::create($data);
+        $website_url = WebsiteUrl::create($data);
 
-        if(!empty($form_stack_url)){
+        //$website_url->assignRole($data['role']);
+        if(!empty($website_url)){
             return $this->jsonResponseSuccess(
-                $form_stack_url
+                $website_url
             );
         }
         else
@@ -68,17 +70,17 @@ class FormStackUrlController extends Controller
             );
         }
     }
-    public function update(FormStackUrlRequest $request,$id) : \Illuminate\Http\JsonResponse
+    public function update(WebsiteUrlRequest $request,$id) : \Illuminate\Http\JsonResponse
     {
      
         $data = $request->validated();
     
-        $form_stack_url = FormStackUrl::find($id);
+        $website_url = WebsiteUrl::find($id);
        
-        if(!empty($form_stack_url)){
-            $form_stack_url->update($data);
+        if(!empty($website_url)){
+            $website_url->update($data);
             return $this->jsonResponseSuccess(
-              ['form_stack_url'=> new FormStackUrlResource($form_stack_url)]
+              ['website_url'=> new WebsiteUrlResource($website_url)]
             );
         }
         else
@@ -92,10 +94,10 @@ class FormStackUrlController extends Controller
 
     public function destroy($id){
       
-        $form_stack_url = FormStackUrl::find($id);
-        if($form_stack_url){
+        $website_url = WebsiteUrl::find($id);
+        if($website_url){
            
-            $form_stack_url->delete();
+            $website_url->delete();
             return $this->jsonResponseSuccess(
                 trans('common.deleted')
             );
@@ -111,13 +113,13 @@ class FormStackUrlController extends Controller
 
     public function updateStatus(Request $request,$id){
         $data = $request->all();
-        $form_stack_url = FormStackUrl::find($id);
-        if(!$form_stack_url)
+        $website_url = WebsiteUrl::find($id);
+        if(!$website_url)
         {
             return $this->jsonResponseFail(trans('common.no_record_found'),401);
         }
-        $form_stack_url->status = $data['status'];
-        $form_stack_url->save();
+        $website_url->status = $data['status'];
+        $website_url->save();
      
         return $this->jsonResponseSuccess(trans('common.status_updated'));
     }

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\FormStackUrlController;
+use App\Http\Controllers\Admin\WebsiteUrlController;
+use App\Http\Controllers\Admin\ImportantInfoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -52,6 +54,30 @@ Route::name('admin.')
             Route::post('update/{id}', [FormStackUrlController::class, 'update']);
             Route::post('destroy/{id}', [FormStackUrlController::class, 'destroy']);
             Route::post('update-status/{id}', [FormStackUrlController::class, 'updateStatus']);
+            
+        });
+
+         Route::name('website-url')
+        ->prefix('website-url')
+        ->group(function (){
+            Route::post('showall', [WebsiteUrlController::class, 'showall']);
+            Route::get('show/{id}', [WebsiteUrlController::class, 'show']);
+            Route::post('create', [WebsiteUrlController::class, 'store']);
+            Route::post('update/{id}', [WebsiteUrlController::class, 'update']);
+            Route::post('destroy/{id}', [WebsiteUrlController::class, 'destroy']);
+            Route::post('update-status/{id}', [WebsiteUrlController::class, 'updateStatus']);
+            
+        });
+
+         Route::name('important-info')
+        ->prefix('important-info')
+        ->group(function (){
+            Route::post('showall', [ImportantInfoController::class, 'showall']);
+            Route::get('show/{id}', [ImportantInfoController::class, 'show']);
+            Route::post('create', [ImportantInfoController::class, 'store']);
+            Route::post('update/{id}', [ImportantInfoController::class, 'update']);
+            Route::post('destroy/{id}', [ImportantInfoController::class, 'destroy']);
+            Route::post('update-status/{id}', [ImportantInfoController::class, 'updateStatus']);
             
         });
     

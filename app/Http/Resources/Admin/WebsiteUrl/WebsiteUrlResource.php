@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Admin\FormStack;
+namespace App\Http\Resources\Admin\WebsiteUrl;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FormStackResource extends JsonResource
+class WebsiteUrlResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
