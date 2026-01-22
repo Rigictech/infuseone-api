@@ -14,9 +14,9 @@ Route::get('/user', function (Request $request) {
 Route::name('session.')
     ->prefix('session')
     ->group(function(){
-        Route::post('login', [LoginController::class, 'login'])->name('login');
-        Route::post('forgot-password', [LoginController::class, 'forgotPassword'])->name('forgotPassword');
-        Route::post('reset-password', [LoginController::class, 'resetPassword'])->name('resetPassword');
+        Route::post('login', [LoginController::class, 'login']);
+        Route::post('forgot-password', [LoginController::class, 'forgotPassword']);
+        Route::post('reset-password', [LoginController::class, 'resetPassword']);
         Route::middleware('auth:sanctum')->post('profile',[LoginController::class, 'profile']);
         Route::middleware('auth:sanctum')->post('change-password',[LoginController::class, 'changePassword']);
         Route::middleware('auth:sanctum')->post('update-profile',[LoginController::class, 'updateProfile']);

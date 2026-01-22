@@ -11,6 +11,12 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\ChangePasswordRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\Crypt;
+
+
 
 
 class LoginController extends Controller
@@ -137,10 +143,15 @@ class LoginController extends Controller
         $request->validate(['email' => 'required|email']);
 
         $user = User::where('email', $request->email)->first();
+         // Encrypt token along with expiration time
         $token = \Str::random(60);
+        $expiration = now()->addMinutes(60);  // Token expires in 60 minutes
+        $encryptedToken = Crypt::encryptString("{$token}|{$request->email}|{$expiration}");
+
+        
         if ($user) { 
 
-            Mail::to($user->email)->send(new ResetPasswordMail($token));
+            Mail::to($user->email)->send(new ResetPasswordMail($encryptedToken));
             return $this->jsonResponseSuccess(['message' => trans('common.MAIL_SEND_SUCCESS')]);
         }
         return $this->jsonResponseFail(['message' => trans('common.USER_NOT_FAILED')]);
@@ -148,24 +159,31 @@ class LoginController extends Controller
     
     }
    
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $this->validate($request, [
-            'token' => 'required',
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|confirmed|min:8',
-        ],[
-            'password.min' => 'The password must be at least 8 characters long.',
-            'email.exists' => 'We could not find an account with that email address.',
-        ]); 
-        $user = User::where('email', $request->email)->first();
+     
+       // Decrypt the token to get the email and expiration
+        try {
+         $decrypted = Crypt::decryptString($request->token);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return $this->jsonResponseFail(['message' => trans('common.INVALID_TOKEN')]);
+        }
+
+        list($token, $email, $expiration) = explode('|', $decrypted);
+
+        if (now()->greaterThan($expiration)) {
+            return $this->jsonResponseFail(['message' => trans('common.TOKEN_EXPIRED')]);
+        }
+
+        $user = User::where('email', $email)->first();
+       
         if ($user) {
             $user->update([
                 'password' => Hash::make($request->password),
                 ]);             
                
-            return redirect()->back()->with('status', trans('common.PASSWORD_RESET_SUCCESS'));
+            return $this->jsonResponseSuccess(['message' => trans('common.PASSWORD_RESET_SUCCESS')]);
         }
-        return redirect()->back()->withErrors(['email' => trans('common.EMAIL_FAILED')]);
+        return $this->jsonResponseFail(['message' =>  trans('common.EMAIL_FAILED')]);
     }
 }
