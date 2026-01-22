@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Response\ResponseTrait;
 use App\Http\Requests\Admin\FormStackUrl\FormStackRequest;
@@ -10,7 +10,7 @@ use App\Models\FormStackUrl;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
-class FormStackController extends Controller
+class FormStackUrlController extends Controller
 {
     use ResponseTrait;
     public function showall(Request $request): \Illuminate\Http\JsonResponse
