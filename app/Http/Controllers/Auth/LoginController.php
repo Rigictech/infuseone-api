@@ -152,7 +152,7 @@ class LoginController extends Controller
         
         if ($user) { 
 
-            Mail::to($user->email)->send(new ResetPasswordMail($encryptedToken));
+            Mail::to($user->email)->send(new ResetPasswordMail($encryptedToken,$request->email));
             return $this->jsonResponseSuccess(['message' => trans('common.MAIL_SEND_SUCCESS')]);
         }
         return $this->jsonResponseFail(['message' => trans('common.USER_NOT_FAILED')]);
