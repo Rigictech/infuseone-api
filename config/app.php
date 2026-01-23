@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Infuse One'),
+    'frontend_login_url'=>env('FRONT_REDIRECTION_MAIN_LOGIN_URL','https://rigicgspl.com/infuseone-ghost-page/'),
 
     /*
     |--------------------------------------------------------------------------

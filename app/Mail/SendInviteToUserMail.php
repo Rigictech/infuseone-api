@@ -14,12 +14,14 @@ class SendInviteToUserMail extends Mailable
     use Queueable, SerializesModels;
 
      public $user;
+     public $token;
     /**
      * Create a new message instance.
      */
-    public function __construct($user)
+    public function __construct($user,$token)
     {
         $this->user = $user;
+        $this->token = $token;
     }
     /**
      * Get the message envelope.
@@ -44,7 +46,7 @@ class SendInviteToUserMail extends Mailable
      public function build()
     {
         return $this->view('mails.send_invite_user')
-            ->with(['user' => $this->user]);
+            ->with(['user' => $this->user,'token'=>$this->token]);
     }
 
     /**

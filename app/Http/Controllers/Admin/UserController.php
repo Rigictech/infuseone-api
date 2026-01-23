@@ -12,7 +12,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendInviteToUserMail;
-
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
@@ -73,8 +73,11 @@ class UserController extends Controller
 
         $user->assignRole($data['role']);
         if(!empty($user)){
-           
-            Mail::to($user->email)->send(new SendInviteToUserMail($user));  
+            $token = \Str::random(60);
+            $expiration = now()->addMinutes(60);  // Token expires in 60 minutes
+            $encryptedToken = Crypt::encryptString("{$token}|{$user->email}|{$expiration}");
+
+            Mail::to($user->email)->send(new SendInviteToUserMail($user,$token));  
             return $this->jsonResponseSuccess(
                 $user
             );
