@@ -39,7 +39,7 @@
                 <!-- Button with token & email -->
                 <tr>
                     <td align="center" style="padding-bottom:25px;">
-                        <a href="{{ config('frontend.login_url') }}/reset-password?token={{ urlencode($token) }}&email={{ urlencode($user->email) }}"
+                        <a href="{{ config('app.frontend_login_url') }}/reset-password?token={{ urlencode($token) }}&email={{ urlencode($user->email) }}"
                            style="background:#7DCCFF; color:#ffffff; text-decoration:none;
                                   padding:14px 28px; font-size:16px; border-radius:5px; display:inline-block;">
                             Set Your Password
@@ -60,7 +60,7 @@
                         If the button doesn’t work, copy and paste this URL into your browser:
                         <br>
                         <span style="word-break:break-all;">
-                            {{ config('frontend.login_url') }}/reset-password?token={{ urlencode($token) }}&email={{ urlencode($user->email) }}
+                           {{ rtrim(config('app.frontend_login_url'), '/') }}/reset-password?token={{ urlencode($token) }}&email={{ urlencode($user->email) }}
                         </span>
                         <br><br>
                         Thank you,<br>

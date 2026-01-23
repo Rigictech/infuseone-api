@@ -48,7 +48,7 @@
                 <!-- Button -->
                 <tr>
                     <td align="center" style="padding-bottom:25px;">
-                        <a href="{{ url('reset-password/' . $token) }}"
+                        <a href="{{ config('app.frontend_login_url') }}/reset-password?token={{ urlencode($token) }}"
                            style="background:#7DCCFF; color:#ffffff; text-decoration:none;
                                   padding:14px 28px; font-size:17px;
                                   border-radius:5px; display:inline-block;">
@@ -72,7 +72,7 @@
                         the URL below into your browser:
                         <br><br>
                         <span style="word-break:break-all;">
-                            {{ url('reset-password/' . $token) }}
+                            {{ rtrim(config('app.frontend_login_url'), '/') }}/reset-password?token={{ urlencode($token) }}
                         </span>
                         <br><br>
                         © {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
