@@ -39,7 +39,7 @@
                 <!-- Button with token & email -->
                 <tr>
                     <td align="center" style="padding-bottom:25px;">
-                        <a href="{{ config('app.frontend_login_url') }}/reset-password?token={{ urlencode($token) }}&email={{ urlencode($user->email) }}"
+                        <a href="{{ config('app.frontend_login_url') }}/reset-password?token={{ $token }}&email={{ urlencode($user->email) }}"
                            style="background:#7DCCFF; color:#ffffff; text-decoration:none;
                                   padding:14px 28px; font-size:16px; border-radius:5px; display:inline-block;">
                             Set Your Password

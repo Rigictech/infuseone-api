@@ -48,7 +48,7 @@
                 <!-- Button -->
                 <tr>
                     <td align="center" style="padding-bottom:25px;">
-                        <a href="{{ config('app.frontend_login_url') }}/reset-password?token={{ urlencode($token) }}"
+                        <a href="{{ config('app.frontend_login_url') }}/reset-password?token={{ $token }}"
                            style="background:#7DCCFF; color:#ffffff; text-decoration:none;
                                   padding:14px 28px; font-size:17px;
                                   border-radius:5px; display:inline-block;">
