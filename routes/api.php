@@ -91,7 +91,8 @@ Route::name('admin.')
             Route::post('update/{id}', [UploadPDFController::class, 'update']);
             Route::post('destroy/{id}', [UploadPDFController::class, 'destroy']);
             Route::post('update-status/{id}', [UploadPDFController::class, 'updateStatus']);
-            
+            Route::post('download-pdf/{id}', [UploadPDFController::class, 'downloadPDF']);
+
         });
     
 });

@@ -141,4 +141,22 @@ class UploadPDFController extends Controller
      
         return $this->jsonResponseSuccess(trans('common.status_updated'));
     }
+
+    public function downloadPDF(Request $request,$id){
+        $uploaded_pdf = UploadPDF::find($id); 
+        if(!$uploaded_pdf)
+        {
+            return $this->jsonResponseFail(trans('common.no_record_found'),401);
+        }
+        $filePath = public_path("storage/".$uploaded_pdf->pdf);
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found');
+        }
+        // Optional: serve the file under a different filename:
+        $filename = $uploaded_pdf->name;
+        // optional headers
+        $headers = [];
+        return response()->download($filePath, $filename, $headers);
+
+    }
 }
