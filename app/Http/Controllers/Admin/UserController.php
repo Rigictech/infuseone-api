@@ -77,7 +77,7 @@ class UserController extends Controller
             $expiration = now()->addMinutes(60);  // Token expires in 60 minutes
             $encryptedToken = Crypt::encryptString("{$token}|{$user->email}|{$expiration}");
 
-            Mail::to($user->email)->send(new SendInviteToUserMail($user,$encryptedToken));  
+            Mail::to($user->email, $user->name ?? '')->send(new SendInviteToUserMail($user,$encryptedToken));  
             return $this->jsonResponseSuccess(
                 $user
             );

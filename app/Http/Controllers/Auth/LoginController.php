@@ -144,20 +144,18 @@ class LoginController extends Controller
         $request->validate(['email' => 'required|email']);
 
         $user = User::where('email', $request->email)->first();
-         // Encrypt token along with expiration time
-        $token = \Str::random(60);
-        $expiration = now()->addMinutes(60);  // Token expires in 60 minutes
-        $encryptedToken = Crypt::encryptString("{$token}|{$request->email}|{$expiration}");
-
-        
         if ($user) { 
+              // Encrypt token along with expiration time
+            $token = \Str::random(60);
+            $expiration = now()->addMinutes(60);  // Token expires in 60 minutes
+            $encryptedToken = Crypt::encryptString("{$token}|{$user->email}|{$expiration}");
+       
 
-            Mail::to($user->email)->send(new ResetPasswordMail($encryptedToken,$request->email));
+            Mail::to($user->email, $user->name ?? '')->send(new ResetPasswordMail($encryptedToken,$user->email));
             return $this->jsonResponseSuccess(['message' => trans('common.MAIL_SEND_SUCCESS')]);
         }
         return $this->jsonResponseFail(['message' => trans('common.USER_NOT_FAILED')]);
-    
-    
+        
     }
    
     public function resetPassword(ResetPasswordRequest $request)

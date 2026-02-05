@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Mail\MailManager;
+use App\Mail\Transport\BrevoTransport;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +24,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        $this->app->make(MailManager::class)->extend('brevo', function () {
+        return new BrevoTransport(config('mail.brevo.api_key'));
+    });
     }
 }
